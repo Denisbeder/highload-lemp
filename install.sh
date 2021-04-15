@@ -62,8 +62,6 @@ sed -i "s/^supervised no/supervised systemd/" /etc/redis/redis.conf
 
 
 echo -e "${CYAN}Configure NGINX${NC}"
-# Create an additional configuration folder for Nginx
-mkdir /etc/nginx/conf.d
 # Download list of bad bots, bad ip's and bad referres
 # https://github.com/mitchellkrogza/nginx-badbot-blocker
 wget -O /etc/nginx/conf.d/blacklist.conf https://raw.githubusercontent.com/denisbeder/highload-lemp/master/blacklist.conf
@@ -150,7 +148,7 @@ sed -i "s/^;opcache.fast_shutdown=0/opcache.fast_shutdown=1/" /etc/php/7.4/fpm/p
 # Set period in seconds in which PHP-FPM should restart if OPcache is not accessible
 sed -i "s/^;opcache.force_restart_timeout=180/opcache.force_restart_timeout=30/" /etc/php/7.4/fpm/php.ini
 
-echo -e "${CYAN}Restart Servies${NC}"
+echo -e "${CYAN}Restart Services${NC}"
 # Restart service redis
 /etc/init.d/redis-server restart
 # Restart memcached service
@@ -216,12 +214,12 @@ echo -e "${CYAN}Start Monit ALL${NC}"
 # Reload main Monit configuration
 update-rc.d monit enable
 # Reload Monit in order to pickup new included *.conf files
-monit reload
+/etc/init.d/monit reload
 # Tell Monit to start all services
-monit start all
+/etc/init.d/monit start all
 # Tell Monit to Monitor all services
-monit monitor all
+/etc/init.d/monit monitor all
 # Get status of processes watched by Monit
-monit status
+/etc/init.d/monit status
 
 echo -e "${GREEN}All installed. Now restart server.${NC}"
