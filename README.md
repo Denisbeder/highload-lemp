@@ -13,7 +13,7 @@ This bash script will install NGINX, PHP, MEMCACHED, REDIS, MONIT on your Ubuntu
 Every command is well commented so you will know what  happens after each line of the code.
 
 ## Requirements
-* Ubuntu 16.04 or later (best if it's fresh / clean installation)
+* Ubuntu 20.04.2 LTS or later (best if it's fresh / clean installation)
 * This script utilises **root** user privileges. If you run it from another user you need to add this user to sudoers group and prepend sudo to all commands in the script.
 
 ## Usage
