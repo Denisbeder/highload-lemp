@@ -218,8 +218,8 @@ update-rc.d monit enable
 # Tell Monit to start all services
 /etc/init.d/monit start all
 # Tell Monit to Monitor all services
-/etc/init.d/monit monitor all
+monit monitor all
 # Get status of processes watched by Monit
-/etc/init.d/monit status
+monit status
 
 echo -e "${GREEN}All installed. Now restart server.${NC}"
