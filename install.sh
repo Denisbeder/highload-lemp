@@ -175,7 +175,7 @@ echo -e 'check process memcached with match memcached\ngroup memcache\nstart pro
 # Create a Monit configuration file to watch after REDIS
 echo -e 'check process redis-server\nwith pidfile "/var/run/redis/redis-server.pid"\nstart program = "/etc/init.d/redis-server start"\nstop program = "/etc/init.d/redis-server stop"\nif 2 restarts within 3 cycles then timeout\nif totalmem > 100 Mb then alert\nif children > 255 for 5 cycles then stop\nif cpu usage > 95% for 3 cycles then restart\nif failed host 127.0.0.1 port 6379 then restart\nif 5 restarts within 5 cycles then timeout' > /etc/monit/conf.d/redis.conf
 # Reload main Monit configuration
-#update-rc.d monit enable
+update-rc.d monit enable
 # Reload Monit in order to pickup new included *.conf files
 monit reload
 # Tell Monit to start all services
@@ -184,3 +184,7 @@ monit start all
 monit monitor all
 # Get status of processes watched by Monit
 monit status
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+echo -e "${GREEN}All installed. Now restart server.${NC}"

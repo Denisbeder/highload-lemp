@@ -19,11 +19,11 @@ Every command is well commented so you will know what  happens after each line o
 ## Usage
 To download and run this script in a single command use the line below:
 ```shell
-wget https://raw.githubusercontent.com/denisbeder/highload-webserver/master/install.sh && bash install.sh
+wget https://raw.githubusercontent.com/Denisbeder/highload-webserver/master/install.sh && bash install.sh
 ```
 Or download install.sh manually, make it executable and run it:
 ```shell
-wget https://raw.githubusercontent.com/denisbeder/highload-webserver/master/install.sh
+wget https://raw.githubusercontent.com/Denisbeder/highload-webserver/master/install.sh
 chmod +x install.sh
 ./install.sh
 ```
