@@ -216,7 +216,7 @@ update-rc.d monit enable
 # Reload Monit in order to pickup new included *.conf files
 /etc/init.d/monit reload
 # Tell Monit to start all services
-/etc/init.d/monit start all
+monit start all
 # Tell Monit to Monitor all services
 monit monitor all
 # Get status of processes watched by Monit
