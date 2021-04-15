@@ -17,7 +17,7 @@ update-locale LANG=pt_BR.UTF-8
 # Change timezone na primeira linha e após a primeira linha deleta tudo
 sed -e '1i America/Campo_Grande' -e '1,$d' /etc/timezone
 # Update installed packages
-yes '' | apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" dist-upgrade
+apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" dist-upgrade
 # Install the most common packages that will be usefull under development environment
 apt-get install zip unzip fail2ban htop sqlite3 nload nano memcached redis-server software-properties-common -y -q
 # Adicione o pacote ondrej/php que possui o PHP 7.4 e outras extensões PHP necessárias.
