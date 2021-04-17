@@ -157,6 +157,14 @@ debconf-set-selections <<< "mariadb-server-10.5 mysql-server/root_password_again
 # Install MariaDB package
 apt-get install mariadb-server -y -q
 
+echo -e "${CYAN}Backup cinfiguration MYSQL${NC}"
+# Create a folder to backup current installation of Nginx && PHP-FPM
+now=$(date +"%Y-%m-%d_%H-%M-%S") 
+mkdir /backup/
+mkdir -p /backup/$now/mysql/
+# Create a full backup of previous MySQL configuration
+cp -r /etc/mysql/ /backup/$now/mysql/
+
 echo -e "${CYAN}Install MariaDB and configure mysql_secure_installation${NC}"
 # Secure Configuration Maria DB
 
