@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 #
 # Follow up commands are best suitable for clean Ubuntu 16.04 installation
 # All commands are executed by the root user
