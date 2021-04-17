@@ -28,7 +28,7 @@ echo -e "${CYAN}Update installed packages${NC}"
 apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" dist-upgrade
 echo -e "${CYAN}Install the most common packages${NC}"
 # Install the most common packages that will be usefull under development environment
-apt-get install zip unzip fail2ban htop sqlite3 nload expect nano memcached redis-server software-properties-common -y -q
+apt-get install zip unzip fail2ban htop sqlite3 nload nano memcached redis-server software-properties-common -y -q
 echo -e "${CYAN}Install Nginx && PHP-FPM stack${NC}"
 # Adicione o pacote ondrej/php que possui o PHP 7.4 e outras extensões PHP necessárias.
 add-apt-repository ppa:ondrej/php -y
@@ -148,54 +148,6 @@ sed -i "s/^;opcache.fast_shutdown=0/opcache.fast_shutdown=1/" /etc/php/7.4/fpm/p
 # Set period in seconds in which PHP-FPM should restart if OPcache is not accessible
 sed -i "s/^;opcache.force_restart_timeout=180/opcache.force_restart_timeout=30/" /etc/php/7.4/fpm/php.ini
 
-echo -e "${CYAN}Install MariaDB${NC}"
-# Use md5 hash of your hostname to define a root password for MariDB
-#db_root_password=$(hostname | md5sum | awk '{print $1}')
-db_root_password=root
-debconf-set-selections <<< "mariadb-server-10.5 mysql-server/root_password password $db_root_password"
-debconf-set-selections <<< "mariadb-server-10.5 mysql-server/root_password_again password $db_root_password"
-# Install MariaDB package
-apt-get install mariadb-server -y -q
-
-echo -e "${CYAN}Install MariaDB and configure mysql_secure_installation${NC}"
-# Secure Configuration Maria DB
-
-SECURE_MYSQL=$(expect -c "
-set timeout 10
-spawn mysql_secure_installation
-
-expect \"Enter current password for root (enter for none):\"
-send \"\r\"
-expect {Set root password? [Y/n] }
-send \"y\r\"
-expect {New password: }
-send \"$db_root_password\r\"
-expect {Re-enter new password:}
-send \"$db_root_password\r\"
-expect {Remove anonymous users? [Y/n] }
-send \"y\r\"
-expect {Disallow root login remotely? [Y/n] }
-send \"y\r\"
-expect {Remove test database and access to it? [Y/n] }
-send \"y\r\"
-expect {Reload privilege tables now? [Y/n] }
-send \"y\r\"
-expect eof
-")
-
-echo $SECURE_MYSQL
-
-echo -e "${CYAN}Custom Configuration MYSQL${NC}"
-# Add custom configuration for your Mysql
-# All modified variables are available at https://mariadb.com/kb/en/library/server-system-variables/
-echo -e "\n[mysqld]\nmax_connections=24\nconnect_timeout=10\nwait_timeout=10\nthread_cache_size=24\nsort_buffer_size=1M\njoin_buffer_size=1M\ntmp_table_size=8M\nmax_heap_table_size=8M\nbinlog_cache_size=8M\nperformance_schema=ON\nbinlog_stmt_cache_size=8M\nkey_buffer_size=1M\ntable_open_cache=64\nread_buffer_size=1M\nquery_cache_limit=1M\nquery_cache_type=OFF\nquery_cache_size=0\ninnodb_buffer_pool_size=8M\ninnodb_open_files=1024\ninnodb_io_capacity=1024\ninnodb_buffer_pool_instances=1\ndefault-storage-engine=InnoDB\nskip-name-resolve" >> /etc/mysql/my.cnf
-# Write down current password for MariaDB in my.cnf
-echo -e "\n[client]\nuser = root\npassword = $db_root_password" >> /etc/mysql/my.cnf
-
-echo -e "${CYAN}Install Mysqltuner for future improvements of MariaDB installation${NC}"
-# Install Mysqltuner for future improvements of MariaDB installation
-apt-get install mysqltuner -y -q
-
 echo -e "${CYAN}Restart Services${NC}"
 # Restart service redis
 /etc/init.d/redis-server restart
@@ -205,8 +157,6 @@ service memcached restart
 /etc/init.d/nginx reload 
 # Reload PHP-FPM installation
 /etc/init.d/php7.4-fpm reload
-# Restart MariaDB
-service mysql restart
 
 echo -e "${CYAN}Install a Monit service in order to maintain system fault tolerance${NC}"
 # Add a rule for iptables in order to make Monit be able to work on this port
@@ -259,13 +209,6 @@ echo -e 'check process memcached with match memcached\ngroup memcache\nstart pro
 echo -e "${CYAN}Add configuration Monit to REDIS${NC}"
 # Create a Monit configuration file to watch after REDIS
 echo -e 'check process redis-server\nwith pidfile "/var/run/redis/redis-server.pid"\nstart program = "/etc/init.d/redis-server start"\nstop program = "/etc/init.d/redis-server stop"\nif 2 restarts within 3 cycles then timeout\nif totalmem > 100 Mb then alert\nif children > 255 for 5 cycles then stop\nif cpu usage > 95% for 3 cycles then restart\nif failed host 127.0.0.1 port 6379 then restart\nif 5 restarts within 5 cycles then timeout' > /etc/monit/conf.d/redis.conf
-
-echo -e "${CYAN}Add configuration Monit to MYSQL${NC}"
-# Create a Monit configuration file to watch after MariaDB
-# Monit will check the availability of mysqld.sock
-# And restart mysql service if it can't be accessible
-# If Monit tries to many times to restart it without success it will take a timeout and then proceed to restart again
-echo -e 'check process mysql with pidfile /run/mysqld/mysqld.pid\nstart program = "/usr/sbin/service mysql start"\nstop program  = "/usr/sbin/service mysql stop"\nif failed unixsocket /var/run/mysqld/mysqld.sock then restart\nif 5 restarts within 5 cycles then timeout' > /etc/monit/conf.d/mariadb.conf
 
 echo -e "${CYAN}Start Monit ALL${NC}"
 # Reload main Monit configuration
