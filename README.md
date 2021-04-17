@@ -1,12 +1,14 @@
-# Highload Webserver Installation
+# Highload LEMP Installation
 This bash script will install NGINX, PHP, MEMCACHED, REDIS, MONIT on your Ubuntu and configure it to maximize its performance of website serving.
 
 ## Features
+* All-in-one one "click" installation of the [LEMP](https://en.wikipedia.org/wiki/LAMP_(software_bundle)) environment
 * [Nginx](https://launchpad.net/~hda-me/+archive/ubuntu/nginx-stable) will be installed with the ability to dynamically load or disable any preloaded module
-* Some core settings of [Nginx](https://nginx.org/en/docs/http/ngx_http_core_module.html) that are often underestimated are configured properly
+* [Backup] Will be created for your current Nginx, PHP, REDIS and MySQL/MariaDB installations
+* Some core settings of [Nginx](https://nginx.org/en/docs/http/ngx_http_core_module.html) and [MariaDB](https://mariadb.com/kb/en/library/server-system-variables/) that are often underestimated are configured properly
 * [OPcache](http://php.net/manual/en/book.opcache.php) is enabled and configured for PHP-FPM 
-* [Monit](https://mmonit.com/monit/) will be configured to watch after SSH, Nginx, PHP, MEMCACHED, REDIS and restart them in case of an emergency
-* This configuration was tested in heavy loaded environment (>500k requests to a webserver a day) more then six months straight
+* [Monit](https://mmonit.com/monit/) will be configured to watch after SSH, Nginx, PHP, MEMCACHED, REDIS and MySQL / MariaDB and restart them in case of an emergency
+* This configuration was tested in heavy loaded environment (>500k requests to a LEMP a day) more then six months straight
 * Don't struggle anymore with adding new server blocks to Nginx when you add new websites to your server
 
 ## Getting started
@@ -19,16 +21,18 @@ Every command is well commented so you will know what  happens after each line o
 ## Usage
 To download and run this script in a single command use the line below:
 ```shell
-wget https://raw.githubusercontent.com/Denisbeder/highload-webserver/master/install.sh && bash install.sh
+wget https://raw.githubusercontent.com/Denisbeder/highload-lemp/master/install.sh && bash install.sh
 ```
 Or download install.sh manually, make it executable and run it:
 ```shell
-wget https://raw.githubusercontent.com/Denisbeder/highload-webserver/master/install.sh
+wget https://raw.githubusercontent.com/Denisbeder/highload-lemp/master/install.sh
 chmod +x install.sh
 ./install.sh
 ```
-Webserver will be configured in such a way that it will try to find a folder which is identical to a website name in your /var/www/ directory.
-<br/>For example if you created an A-record in your DNS panel where you pointed '@' name of 'test.com' domain to '1.2.3.4' IP adress of your server and you try to access 'test.com' Webserver will try to serve index.php or index.html from the /var/www/test.com directory as an initial response.
+LEMP will be configured in such a way that it will try to find a folder which is identical to a website name in your /var/www/ directory.
+<br/>For example if you created an A-record in your DNS panel where you pointed '@' name of 'test.com' domain to '1.2.3.4' IP adress of your server and you try to access 'test.com' LEMP will try to serve index.php or index.html from the /var/www/test.com directory as an initial response.
+
+**MariaDB password** is generated using md5 hash of your server hostname and will be put in your /etc/mysql/my.cnf after [client] directive. 
 
 ## Example Files
 These files will be created in order to help you understand how this installation works:
